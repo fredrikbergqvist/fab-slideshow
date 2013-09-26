@@ -1,0 +1,36 @@
+.fab-slideshow{
+	width: 100%;
+}
+
+.fab-slideshow .selected{
+	z-index: 999;
+}
+
+.fab-slideshow ul{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.fab-slideshow-container{
+	position: relative;
+}
+
+.fab-slideshow-item{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.fab-slideshow-item img{
+	width: 100%;
+	display: block;
+}
+
+.fab-slideshow-item-text{
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fab-slideshow Demo</title>
+    <link href="../src/fab-slideshow.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<main>
+    <header>
+        <h1>Slideshow</h1>
+
+        <p class="preamble"></p>
+    </header>
+
+    <section id="demo">
+        <header>
+            <h2>Demo</h2>
+        </header>
+
+        <div class="fab-slideshow">
+            <!-- Generated
+            <ul class="fab-slideshow-preview-container">
+                <li class="fab-slideshow-preview-item"></li>
+            </ul>
+            -->
+            <ul class="fab-slideshow-container">
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/1.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 1</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/2.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 2</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/3.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 3</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
+    </section>
+
+    <script src="../lib/jquery-1.10.2.js"></script>
+    <script src="../src/fab-slideshow.js"></script>
+    <script type="text/javascript">
+        $(".fab-slideshow").fabSlideShow({'previewPosition' : 'left'});
+    </script>
+</main>
+</body>
+</html>
