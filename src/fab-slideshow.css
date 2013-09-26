@@ -1,9 +1,27 @@
+.fab-slideshow,
+.fab-slideshow div,
+.fab-slideshow a,
+.fab-slideshow p,
+.fab-slideshow span,
+.fab-slideshow ul,
+.fab-slideshow li{
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 .fab-slideshow{
 	width: 100%;
+	color: #fff;
+
 }
 
 .fab-slideshow .selected{
 	z-index: 999;
+}
+.fab-slideshow a{
+	color: #f2f2f2;
 }
 
 .fab-slideshow ul{
@@ -33,4 +51,6 @@
 	width: 100%;
 	bottom: 0;
 	left: 0;
+	background-color: rgba(0,0,0,0.6);
+	padding: 2.5% 5%;
 }
