@@ -54,3 +54,15 @@
 	background-color: rgba(0,0,0,0.6);
 	padding: 2.5% 5%;
 }
+
+.fab-slideshow-preview{
+    width: 100%;
+}
+.fab-slideshow-preview-item{
+    float:left;
+    width: 33%;
+}
+.fab-slideshow-preview-item img{
+    float:left;
+    width: 100%;
+}

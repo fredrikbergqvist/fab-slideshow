@@ -1,94 +1,156 @@
 ;(function ($, window, document, undefined) {
     "use strict";
 
-
-	var fabSlideshow = function(elem, options){
+    var fabSlideshow = function(elem, options){
       this.elem = elem;
       this.$elem = $(elem);
       this.options = options;
     },
     thisPlugin;
 
-	fabSlideshow.prototype = {
-	    defaults: {
-	    	autoRotate: true,
-	    	slideInterval: 3000,
-	      	previewPosition: 'right'
-	    },
+    fabSlideshow.prototype = {
+        defaults: {
+            autoRotate: true,
+            slideInterval: 5000,
+            previewPosition: 'bottom'
+        },
+        init: function() {
+            //Set variables
+            thisPlugin = this;
+            thisPlugin.config = $.extend({}, this.defaults, this.options);
+            thisPlugin.slideItems = this.$elem.find(".fab-slideshow-item");
+            thisPlugin.selectedSlideIndex = 0;
 
-		init: function() {
-			//Set variables
-			thisPlugin = this;
-			thisPlugin.config = $.extend({}, this.defaults, this.options);
-      		thisPlugin.slideItems = this.$elem.find(".fab-slideshow-item");
-      		thisPlugin.selectedSlideIndex = -1;
+            //init the slideshow
+            thisPlugin.slideshow.init();
 
-      		//Set first slide
-			thisPlugin.$selectedItem = $(this.slideItems.get(0));
-			thisPlugin.$selectedItem.addClass("selected");
-			if(thisPlugin.config.autoRotate){
-				thisPlugin.startSlideshow();
-			}
-			return thisPlugin;
-		},
-		startSlideshow: function(){
-			//Start rotating the slides
-			var slideRotator = setInterval(function () {
-				var nextSlide = thisPlugin.getNextSlide();
-				thisPlugin.setSlideAsSelected(nextSlide);
-			}, thisPlugin.config.slideInterval);
-		},
-		setSlideAsSelected: function($slide){
-			//Remove selected css class on current slide 
-			thisPlugin.deselectCurrentSlide();
-			//Set slide as selected
-			thisPlugin.$selectedItem = $slide;
-			thisPlugin.$selectedItem.addClass("selected");
+            return thisPlugin;
+        },
+        slideshow:{
+            init: function(){
+                //Set first slide
+                thisPlugin.$selectedItem = $(thisPlugin.slideItems.get(0));
+                thisPlugin.$selectedItem.addClass("selected");
 
-		},
-		deselectCurrentSlide: function(){
-			thisPlugin.$selectedItem.removeClass("selected");
-		},
+                //Register handlers
+                thisPlugin.slideshow.handlers.slideMouseover();
+                thisPlugin.slideshow.handlers.slideMouseout();
 
-		getNextSlide: function(){
-			var nextSlideId = (thisPlugin.selectedSlideIndex + 1);
-			console.log(thisPlugin.slideItems.length +' '+ nextSlideId);
-			if(nextSlideId >= thisPlugin.slideItems.length){
-				nextSlideId = 0;
-			}
-			thisPlugin.selectedSlideIndex = nextSlideId;
-			return $(thisPlugin.slideItems.get(nextSlideId));
-		},
-		getPreviousSlide: function(){
-			var prevSlideId = (thisPlugin.selectedSlideIndex - 1);
-			if(prevSlideId < 0){
-				prevSlideId = (thisPlugin.slideItems.length - 1);
-			}
-			return $(thisPlugin.slideItems.get(prevSlideId));
-		},
+                //render preview window
+                thisPlugin.previewWindow.init();
 
-		gui: {
-		},
+                //Start rotating the slides
+                if(thisPlugin.config.autoRotate){
+                    thisPlugin.slideshow.startSlideshow();
+                }
+            },
 
-		events:{
+            startSlideshow: function(){
+                //Start rotating the slides
+                thisPlugin.slideRotator = setInterval(
+                    function () {
+                        thisPlugin.slideshow.setSlideAsSelected(thisPlugin.slideshow.getNextSlide());
+                    }, thisPlugin.config.slideInterval);
+                thisPlugin.$elem.removeClass("stopped").addClass("playing");
+            },
+            stopSlideshow: function(){
+                //Stop rotating the slides
+                clearInterval(thisPlugin.slideRotator);
+                thisPlugin.$elem.removeClass("playing").addClass("stopped");
+            },
+            setSlideAsSelected: function($slide){
+                //Remove selected css class on current slide
+                thisPlugin.slideshow.deselectCurrentSlide();
+                //Set slide as selected
+                thisPlugin.$selectedItem = $slide;
+                thisPlugin.$selectedItem.addClass("selected");
 
-		},
+            },
+            deselectCurrentSlide: function(){
+                thisPlugin.$selectedItem.removeClass("selected");
+            },
 
-		handlers:{
+            getNextSlide: function(){
+                var nextSlideId = (thisPlugin.selectedSlideIndex + 1);
+                if(nextSlideId >= thisPlugin.slideItems.length){
+                    nextSlideId = 0;
+                }
+                thisPlugin.selectedSlideIndex = nextSlideId;
+                return $(thisPlugin.slideItems.get(nextSlideId));
+            },
+            getPreviousSlide: function(){
+                var prevSlideId = (thisPlugin.selectedSlideIndex - 1);
+                if(prevSlideId < 0){
+                    prevSlideId = (thisPlugin.slideItems.length - 1);
+                }
+                return $(thisPlugin.slideItems.get(prevSlideId));
+            },
 
-		},
+            handlers:{
+                slideMouseover: function(){
+                    thisPlugin.$elem.mouseover(thisPlugin.slideshow.stopSlideshow);
+                },
+                slideMouseout: function(){
+                    thisPlugin.$elem.mouseout(thisPlugin.slideshow.callbacks.slideMouseout);
+                }
+            },
 
-		callbacks:{
+            callbacks:{
+                slideMouseout: function(){
+                    if (thisPlugin.config.autoRotate) {
+                        thisPlugin.slideRotator = null;
+                        thisPlugin.slideshow.startSlideshow();
+                    }
+                }
+            }
+        },
 
-		}
-	}
+        previewWindow: {
+            init: function(){
+                thisPlugin.previewWindow.gui.renderPreviewWindow();
+            },
+            gui: {
+                renderPreviewWindow: function(){
+                    var items = thisPlugin.previewWindow.gui.generatePreviewItem(),
+                        previewBlock = "<nav class='fab-slideshow-preview'><ul class='fab-slideshow-preview-container'>{0}</ul></nav>";
+                    thisPlugin.$elem.append(previewBlock.format(items));
 
-	fabSlideshow.defaults = fabSlideshow.prototype.defaults;
+                },
+                generatePreviewItem: function(){
+                    var item, i, imgSrc, name,
+                        itemTemplate = "<li class='fab-slideshow-preview-item'><img src='{0}' alt='{1}' /></li>",
+                        items = "";
+                    for(i = 0; i < thisPlugin.slideItems.length; i++){
+                        item = $(thisPlugin.slideItems.get(i));
+                        imgSrc = item.find("img").attr("src");
+                        name = item.find("h3").text();
 
-	$.fn.fabSlideshow = function(options) {
-		return this.each(function() {
-			new fabSlideshow(this, options).init();
-		});
-	};
+                        items += itemTemplate.format(imgSrc, name);
+                    }
+                    return items;
+                }
+            },
+            events:{
 
-}(jQuery, window, document));
+            }
+        }
+    };
+    fabSlideshow.defaults = fabSlideshow.prototype.defaults;
+
+
+    $.fn.fabSlideshow = function(options) {
+        return this.each(function() {
+            new fabSlideshow(this, options).init();
+        });
+    };
+
+    if (!String.prototype.format) {
+        String.prototype.format = function() {
+            var args = arguments;
+            return this.replace(/{(\d+)}/g, function(match, number) {
+                return typeof args[number] !== 'undefined' ? args[number] : match;
+            });
+        };
+    }
+
+}(jQuery, window, document, undefined));
