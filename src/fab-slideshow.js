@@ -69,9 +69,10 @@
                 thisPlugin.$elem.removeClass("playing").addClass("stopped");
             },
             setSlideAsSelected: function($slide){
+                if($slide.hasClass("selected")){return;}
+
                 //Remove selected css class on current slide
                 thisPlugin.slideshow.deselectCurrentSlide();
-
 
                 //Set slide as selected
                 thisPlugin.$selectedItem = $slide;
@@ -123,6 +124,7 @@
         previewWindow: {
             init: function(){
                 thisPlugin.previewWindow.gui.renderPreviewWindow();
+                thisPlugin.previewWindow.handlers.previewItemMouseOver();
             },
             $previewWindow: {},
             gui: {
@@ -134,7 +136,7 @@
                 },
                 generatePreviewItem: function(){
                     var item, i, imgSrc, name,
-                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2} {3}'><img src='{0}' alt='{1}' /></li>",
+                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2} {3}' data-slide='{2}'><img src='{0}' alt='{1}' /><div class='fab-slideshow-preview-item-text'><h3>{1}</h3></div></li>",
                         items = "",
                         selectedClass = "";
                     for(i = 0; i < thisPlugin.slideItems.length; i++){
@@ -152,8 +154,20 @@
                     thisPlugin.previewWindow.$previewWindow.find(".slide-" + slideNumber).addClass("selected");
                 }
             },
-            events:{
+            handlers:{
+                previewItemMouseOver: function(){
+                    thisPlugin.previewWindow.$previewWindow.on("mouseover", ".fab-slideshow-preview-item", thisPlugin.previewWindow.callbacks.previewItemMouseOver);
+                }
+            },
+            callbacks:{
+                previewItemMouseOver: function(){
+                    var $this = $(this),
+                        slideNumber = $this.data("slide"),
+                        $slide = $(thisPlugin.slideItems.get(slideNumber));
 
+                    thisPlugin.slideshow.setSlideAsSelected($slide);
+                    thisPlugin.previewWindow.gui.setPreviewItemAsSelected(slideNumber);
+                }
             }
         }
     };

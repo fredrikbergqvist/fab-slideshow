@@ -4,6 +4,7 @@
 .fab-slideshow p,
 .fab-slideshow span,
 .fab-slideshow img,
+.fab-slideshow nav,
 .fab-slideshow ul,
 .fab-slideshow li{
     -moz-box-sizing: border-box;
@@ -16,6 +17,7 @@
     width: 100%;
     color: #fff;
     background-color: #000;
+    overflow: hidden;
 }
 
 .fab-slideshow .selected{
@@ -61,28 +63,27 @@
     width: 20%;
     float:right;
     background-color: #000;
-    padding-left: 1%;
 }
 .fab-slideshow-preview-item{
     width: 100%;
     display: block;
+    overflow: hidden;
+    opacity: 0.3;
 }
 .fab-slideshow-preview-item img{
     float:left;
     width: 100%;
-    padding: 2.5% 5%;
-}
-.fab-slideshow-preview-item:first-child img{
-    padding-top: 4%;
-}
-.fab-slideshow-preview-item:last-child img{
-    padding-bottom: 4%;
-}
-
-.fab-slideshow-preview-item{
-    opacity: 0.3;
 }
 
 .fab-slideshow-preview-item.selected{
     opacity: 1;
+}
+.fab-slideshow-preview-item.selected img{
+    border: 3px solid #00A6D6;
+}
+
+.fab-slideshow-preview-item-text{
+    position: absolute;
+    left: 0;
+    bottom:0;
 }

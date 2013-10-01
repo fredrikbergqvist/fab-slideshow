@@ -4,5 +4,25 @@ body{
 
 main{
     margin: 0 auto;
-    max-width: 1000px;
+    width: 986px;
+}
+
+.fab-slideshow{
+    width: 986px;
+}
+
+.fab-slideshow-preview{
+    padding: 12px;
+}
+.fab-slideshow-preview-item{
+    position: relative;
+}
+
+.fab-slideshow-preview-item img{
+    margin-bottom: 9px;
+}
+.fab-slideshow-preview-item:first-child img{
+}
+.fab-slideshow-preview-item:last-child img{
+    margin-bottom: 0;
 }
