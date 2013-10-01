@@ -14,7 +14,7 @@
 .fab-slideshow{
 	width: 100%;
 	color: #fff;
-
+    background-color: #000;
 }
 
 .fab-slideshow .selected{
@@ -32,6 +32,7 @@
 
 .fab-slideshow-container{
 	position: relative;
+    width: 80%;
 }
 
 .fab-slideshow-item{
@@ -56,11 +57,15 @@
 }
 
 .fab-slideshow-preview{
-    width: 100%;
+    width: 20%;
+    float:right;
+    background-color: #000;
+    padding-left: 1%;
 }
 .fab-slideshow-preview-item{
-    float:left;
-    width: 33%;
+    width: 100%;
+    display: block;
+    padding: 0.5% 0;
 }
 .fab-slideshow-preview-item img{
     float:left;

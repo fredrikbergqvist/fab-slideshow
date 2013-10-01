@@ -21,6 +21,8 @@
             thisPlugin.slideItems = this.$elem.find(".fab-slideshow-item");
             thisPlugin.selectedSlideIndex = 0;
 
+            thisPlugin.slideshow.setSlideCssClasses();
+
             //init the slideshow
             thisPlugin.slideshow.init();
 
@@ -44,7 +46,18 @@
                     thisPlugin.slideshow.startSlideshow();
                 }
             },
-
+            setSlideCssClasses : function(){
+                //Mark first item as selected
+                //Set slide numbers
+                var i, $slide;
+                for (i = 0;i<thisPlugin.slideItems.length;i++){
+                    $slide = $(thisPlugin.slideItems.get(i));
+                    $slide.addClass("slide-" + i);
+                    /*$slide.each(function(){
+                        $.data(this, "slide", i);
+                    });*/
+                }
+            },
             startSlideshow: function(){
                 //Start rotating the slides
                 thisPlugin.slideRotator = setInterval(
@@ -109,25 +122,30 @@
             init: function(){
                 thisPlugin.previewWindow.gui.renderPreviewWindow();
             },
+            $previewWindow: {},
             gui: {
                 renderPreviewWindow: function(){
                     var items = thisPlugin.previewWindow.gui.generatePreviewItem(),
                         previewBlock = "<nav class='fab-slideshow-preview'><ul class='fab-slideshow-preview-container'>{0}</ul></nav>";
                     thisPlugin.$elem.append(previewBlock.format(items));
-
+                    thisPlugin.previewWindow.$previewWindow = thisPlugin.$elem.find(".fab-slideshow-preview");
                 },
                 generatePreviewItem: function(){
                     var item, i, imgSrc, name,
-                        itemTemplate = "<li class='fab-slideshow-preview-item'><img src='{0}' alt='{1}' /></li>",
+                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2}'><img src='{0}' alt='{1}' /></li>",
                         items = "";
                     for(i = 0; i < thisPlugin.slideItems.length; i++){
                         item = $(thisPlugin.slideItems.get(i));
                         imgSrc = item.find("img").attr("src");
                         name = item.find("h3").text();
 
-                        items += itemTemplate.format(imgSrc, name);
+                        items += itemTemplate.format(imgSrc, name, i);
                     }
                     return items;
+                },
+                setPreviewItemAsSelected: function(slide){
+                    thisPlugin.previewWindow.$previewWindow.find(".selected").removeClass("selected");
+                    thisPlugin.previewWindow.$previewWindow.find(slide).addClass("selected");
                 }
             },
             events:{
