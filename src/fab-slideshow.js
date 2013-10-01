@@ -52,10 +52,7 @@
                 var i, $slide;
                 for (i = 0;i<thisPlugin.slideItems.length;i++){
                     $slide = $(thisPlugin.slideItems.get(i));
-                    $slide.addClass("slide-" + i);
-                    /*$slide.each(function(){
-                        $.data(this, "slide", i);
-                    });*/
+                    $slide.attr("data-slide", i).addClass("slide-" + i);
                 }
             },
             startSlideshow: function(){
@@ -74,9 +71,14 @@
             setSlideAsSelected: function($slide){
                 //Remove selected css class on current slide
                 thisPlugin.slideshow.deselectCurrentSlide();
+
+
                 //Set slide as selected
                 thisPlugin.$selectedItem = $slide;
                 thisPlugin.$selectedItem.addClass("selected");
+
+                //Set preview as selected
+                thisPlugin.previewWindow.gui.setPreviewItemAsSelected($slide.data("slide"));
 
             },
             deselectCurrentSlide: function(){
@@ -132,20 +134,22 @@
                 },
                 generatePreviewItem: function(){
                     var item, i, imgSrc, name,
-                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2}'><img src='{0}' alt='{1}' /></li>",
-                        items = "";
+                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2} {3}'><img src='{0}' alt='{1}' /></li>",
+                        items = "",
+                        selectedClass = "";
                     for(i = 0; i < thisPlugin.slideItems.length; i++){
                         item = $(thisPlugin.slideItems.get(i));
                         imgSrc = item.find("img").attr("src");
                         name = item.find("h3").text();
+                        selectedClass = i === 0 ? "selected"  : "";
 
-                        items += itemTemplate.format(imgSrc, name, i);
+                        items += itemTemplate.format(imgSrc, name, i, selectedClass);
                     }
                     return items;
                 },
-                setPreviewItemAsSelected: function(slide){
+                setPreviewItemAsSelected: function(slideNumber){
                     thisPlugin.previewWindow.$previewWindow.find(".selected").removeClass("selected");
-                    thisPlugin.previewWindow.$previewWindow.find(slide).addClass("selected");
+                    thisPlugin.previewWindow.$previewWindow.find(".slide-" + slideNumber).addClass("selected");
                 }
             },
             events:{
