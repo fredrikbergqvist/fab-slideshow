@@ -11,8 +11,7 @@
     fabSlideshow.prototype = {
         defaults: {
             autoRotate: true,
-            slideInterval: 5000,
-            previewPosition: 'bottom'
+            slideInterval: 5000
         },
         init: function() {
             //Set variables
@@ -32,7 +31,7 @@
             init: function(){
                 //Set first slide
                 thisPlugin.$selectedItem = $(thisPlugin.slideItems.get(0));
-                thisPlugin.$selectedItem.addClass("selected");
+                thisPlugin.$selectedItem.addClass("selected").css("display", "block");
 
                 //Register handlers
                 thisPlugin.slideshow.handlers.slideMouseover();
@@ -52,38 +51,55 @@
                 var i, $slide;
                 for (i = 0;i<thisPlugin.slideItems.length;i++){
                     $slide = $(thisPlugin.slideItems.get(i));
-                    $slide.attr("data-slide", i).addClass("slide-" + i);
+                    $slide.attr("data-slide", i).addClass("slide-" + i).css("display", "none");
                 }
             },
             startSlideshow: function(){
                 //Start rotating the slides
+                thisPlugin.$elem.trigger("fabSlideshowStarted");
                 thisPlugin.slideRotator = setInterval(
                     function () {
-                        thisPlugin.slideshow.setSlideAsSelected(thisPlugin.slideshow.getNextSlide());
+                        thisPlugin.slideshow.setSlideAsSelected(thisPlugin.slideshow.getNextSlide(), true);
                     }, thisPlugin.config.slideInterval);
                 thisPlugin.$elem.removeClass("stopped").addClass("playing");
             },
             stopSlideshow: function(){
                 //Stop rotating the slides
+                thisPlugin.$elem.trigger("fabSlideshowStopped");
                 clearInterval(thisPlugin.slideRotator);
                 thisPlugin.$elem.removeClass("playing").addClass("stopped");
             },
-            setSlideAsSelected: function($slide){
+            setSlideAsSelected: function($slide, isAutomated){
                 if($slide.hasClass("selected")){return;}
 
                 //Remove selected css class on current slide
-                thisPlugin.slideshow.deselectCurrentSlide();
+                thisPlugin.slideshow.deselectCurrentSlide(isAutomated);
+
 
                 //Set slide as selected
+                var slideNumber = $slide.data("slide");
                 thisPlugin.$selectedItem = $slide;
                 thisPlugin.$selectedItem.addClass("selected");
+                thisPlugin.selectedSlideIndex = slideNumber;
+                if(isAutomated){
+                    thisPlugin.$selectedItem.fadeIn(1000);
+                }else{
+                    thisPlugin.$selectedItem.css("display", "block");
+                }
 
                 //Set preview as selected
-                thisPlugin.previewWindow.gui.setPreviewItemAsSelected($slide.data("slide"));
+                thisPlugin.previewWindow.gui.setPreviewItemAsSelected(slideNumber);
+                thisPlugin.$elem.trigger("fabSlideshowSlideSelected", [slideNumber, isAutomated]);
 
             },
-            deselectCurrentSlide: function(){
+            deselectCurrentSlide: function(isAutomated){
                 thisPlugin.$selectedItem.removeClass("selected");
+
+                if(isAutomated){
+                    thisPlugin.$selectedItem.fadeOut(1000);
+                }else{
+                    thisPlugin.$selectedItem.css("display", "none");
+                }
             },
 
             getNextSlide: function(){
@@ -165,8 +181,7 @@
                         slideNumber = $this.data("slide"),
                         $slide = $(thisPlugin.slideItems.get(slideNumber));
 
-                    thisPlugin.slideshow.setSlideAsSelected($slide);
-                    thisPlugin.previewWindow.gui.setPreviewItemAsSelected(slideNumber);
+                    thisPlugin.slideshow.setSlideAsSelected($slide, false);
                 }
             }
         }

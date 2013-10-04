@@ -11,7 +11,7 @@
     <header>
         <h1>Slideshow</h1>
 
-        <p class="preamble"></p>
+        <p class="preamble">A jQuery based slideshow with preview images that uses <a href="http://rocha.la/jQuery-slimScroll">jQuery slimScroll</a> for scrolling.</p>
     </header>
 
     <section id="demo">
@@ -57,16 +57,137 @@
                         </div>
                     </a>
                 </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/5.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 5</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/6.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image6</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/7.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 7</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="fab-slideshow-item">
+                    <a href="#">
+                        <img src="images/8.jpg" alt="Dummy image">
+                        <div class="fab-slideshow-item-text">
+                            <h3>Dummy image 8</h3>
+                            <p>Lorem ipsum dolor sit amet...</p>
+                        </div>
+                    </a>
+                </li>
 
             </ul>
         </div>
+    </section>
 
+    <section id="configuration">
+        <header>
+            <h2>Configuration options</h2>
+            <p class="preamble">Not too much in the case of configuration, <i>'autorotate'</i> set to true will rotate the slideshow using <i>'slideInterval'</i>.</p>
+        </header>
+
+        <h3>Start</h3>
+        <code>
+            $(".fab-slideshow").fabSlideshow(<br />
+            {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;'autoRotate' : true, <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;'slideInterval': 5000<br />
+            });
+        </code>
+    </section>
+    <section id="markup">
+        <header>
+            <h2>HTML Markup</h2>
+            <p class="preamble">Below is the bear necessities for making the plugin work.</p>
+        </header>
+        <p>The plugin will autogenerate the preview window</p>
+
+        <h3>Start</h3>
+        <code>
+            &lt;div class="fab-slideshow"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;ul class="fab-slideshow-container"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;li class="fab-slideshow-item"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;img src="images/1.jpg" alt="Dummy image"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="fab-slideshow-item-text"&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h3&gt;Dummy image 1&lt;/h3&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Lorem ipsum dolor sit amet...&lt;/p&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/li&gt;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/ul&gt;<br />
+            &lt;/div&gt;<br />
+        </code>
+    </section>
+
+    <section id="events">
+        <header>
+            <h2>Events</h2>
+            <p class="preamble">The slideshow will trigger events on start, stop and slide selected</p>
+        </header>
+
+        <h3>Start</h3>
+        <code>
+            fabSlideshowStarted
+        </code>
+
+        <h3>Stopped</h3>
+        <code>
+            fabSlideshowStopped
+        </code>
+
+        <h3>Slide selected</h3>
+        <code>
+            fabSlideshowSlideSelected<br />
+            param: slide number
+        </code>
     </section>
 
     <script src="../lib/jquery-1.10.2.js"></script>
+    <script src="../lib/jquery.slimscroll.1.3.1.js"></script>
     <script src="../src/fab-slideshow.js"></script>
     <script type="text/javascript">
-        $(".fab-slideshow").fabSlideshow({'previewPosition' : 'top'});
+        $(function(){
+            $(".fab-slideshow").fabSlideshow({'previewPosition' : 'top', 'previewWindowHeight': '436px'});
+
+            $(".fab-slideshow").find(".fab-slideshow-preview-container").slimScroll({
+                position: 'right',
+                height: 'auto',
+                railVisible: true,
+                railColor: '#ccc',
+                color: '#fff',
+                distance: '-9px',
+                size: '5px',
+                alwaysVisible: true,
+                wheelStep: 1,
+                disableFadeOut : true});
+
+            $(".fab-slideshow").on("fabSlideshowSlideSelected", function(e, slideNumber, isAuto){
+                if(isAuto){
+                    $(".fab-slideshow").find(".fab-slideshow-preview-container").slimScroll({scrollTo : (slideNumber*100)});
+                }
+            });
+
+            $(".slimScrollDiv").css("overflow", "visible");
+        });
     </script>
 </main>
 </body>
