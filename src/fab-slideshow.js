@@ -181,7 +181,7 @@
                 },
                 generatePreviewItem: function(){
                     var item, i, imgSrc, name,
-                        itemTemplate = "<li id='fab-slide-{2}' class='fab-slideshow-preview-item slide-{2} {3}' data-slide='{2}'><img src='{0}' alt='{1}' /><div class='fab-slideshow-preview-item-text'><h3>{1}</h3></div></li>",
+                        itemTemplate = "<li id='fab-slide-{2}' class='fab-slideshow-preview-item slide-{2} {3}' data-slide='{2}' tabindex='-1'><img src='{0}' alt='{1}' /><div class='fab-slideshow-preview-item-text'><h3>{1}</h3></div></li>",
                         items = "",
                         selectedClass = "";
                     for(i = 0; i < self.slideItems.length; i++){
