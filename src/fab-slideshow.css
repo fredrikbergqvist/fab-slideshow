@@ -88,6 +88,9 @@
     float:right;
     background-color: #000;
 }
+.fab-slideshow-preview-container{
+    overflow: hidden;
+}
 .fab-slideshow-preview-item{
     width: 100%;
     display: block;
@@ -110,4 +113,29 @@
     position: absolute;
     left: 0;
     bottom:0;
+}
+
+.fab-slideshow-preview-scroll-up,
+.fab-slideshow-preview-scroll-down{
+    display: block;
+    background: url("fab-slideshow-scroll-sprite.png") no-repeat;
+    height: 20px;
+}
+.fab-slideshow-preview-scroll-up{
+    background-position: 50% -20px
+}
+.fab-slideshow-preview-scroll-up:focus,
+.fab-slideshow-preview-scroll-up:hover{
+    background-position: 50% 5px
+}
+.fab-slideshow-preview-scroll-down{
+    background-position: 50% -68px;
+}
+.fab-slideshow-preview-scroll-down:focus,
+.fab-slideshow-preview-scroll-down:hover{
+    background-position: 50% -43px;
+}
+.fab-slideshow-preview-scroll-up span,
+.fab-slideshow-preview-scroll-down span{
+    display: none;
 }

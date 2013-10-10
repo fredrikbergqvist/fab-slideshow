@@ -11,7 +11,7 @@
     <header>
         <h1>Slideshow</h1>
 
-        <p class="preamble">A jQuery based slideshow with preview images that uses <a href="http://rocha.la/jQuery-slimScroll">jQuery slimScroll</a> for scrolling.</p>
+        <p class="preamble">A jQuery based slideshow with preview images. It is possible to use the mousewheel to scroll the preview window.</p>
     </header>
 
     <section id="demo">
@@ -101,17 +101,22 @@
     <section id="configuration">
         <header>
             <h2>Configuration options</h2>
-            <p class="preamble">Not too much in the case of configuration, <i>'autorotate'</i> set to true will rotate the slideshow using <i>'slideInterval'</i>.</p>
         </header>
-
-        <h3>Start</h3>
         <code>
             $(".fab-slideshow").fabSlideshow(<br />
             {<br />
             &nbsp;&nbsp;&nbsp;&nbsp;'autoRotate' : true, <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;'slideInterval': 5000<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;'slideInterval' : 5000,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;'showPreviewWindow': true<br />
             });
         </code>
+
+        <h4>autoRotate <i>boolean</i></h4>
+        <p>Autostart the rotation or not</p>
+        <h4>autoRotate <i>int</i></h4>
+        <p>Number of milliseconds between slide changes (if autorotate is enables)</p>
+        <h4>showPreviewWindow <i>boolean</i></h4>
+        <p>Show the preview window the rotation or not</p>
     </section>
     <section id="markup">
         <header>
@@ -194,31 +199,11 @@
     </section>
 
     <script src="../lib/jquery-1.10.2.js"></script>
-    <script src="../lib/jquery.slimscroll.1.3.1.js"></script>
     <script src="../src/fab-slideshow.js"></script>
     <script type="text/javascript">
         $(function(){
             $(".fab-slideshow").fabSlideshow();
 
-            $(".fab-slideshow").find(".fab-slideshow-preview-container").slimScroll({
-                position: 'right',
-                height: 'auto',
-                railVisible: true,
-                railColor: '#ccc',
-                color: '#fff',
-                distance: '-9px',
-                size: '5px',
-                alwaysVisible: true,
-                wheelStep: 1,
-                disableFadeOut : true});
-
-            $(".fab-slideshow").on("fabSlideshowSlideSelected", function(e, slideNumber, isAuto){
-                if(isAuto){
-                    $(".fab-slideshow").find(".fab-slideshow-preview-container").slimScroll({scrollTo : (slideNumber*100)});
-                }
-            });
-
-            $(".slimScrollDiv").css("overflow", "visible");
         });
     </script>
 </main>

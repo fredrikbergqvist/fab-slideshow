@@ -1,8 +1,10 @@
-/*! Copyright (c) 2013 Fredrik Bergqvist
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+/*! Copyright (c) 2013 Fredrik Bergqvist (fredrik (at) bergqvist dot it)
+ *  Download here: http://github.com/fredrikbergqvist/fab-slideshow
  *
- * Version: 1.0.0
+ *  Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ *  and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+ *
+ *  Version: 1.0.0
  *
  */
 ;(function ($, window, document, undefined) {
@@ -13,155 +15,177 @@
       this.$elem = $(elem);
       this.options = options;
     },
-    _this;
+    self;
 
     fabSlideshow.prototype = {
         defaults: {
             autoRotate: true,
-            slideInterval: 5000
+            slideInterval: 5000,
+            showPreviewWindow : true
         },
         init: function() {
             //Set variables
-            _this = this;
-            _this.config = $.extend({}, _this.defaults, _this.options);
-            _this.slideItems = _this.$elem.find(".fab-slideshow-item");
-            _this.selectedSlideIndex = 0;
-            _this.slideshow.setSlideCssClasses();
+            self = this;
+            self.config = $.extend({}, self.defaults, self.options);
+            self.slideItems = self.$elem.find(".fab-slideshow-item");
+            self.selectedSlideIndex = 0;
+            self.slideshow.setSlideCssClasses();
             //init the slideshow
-            _this.slideshow.init();
+            self.slideshow.init();
 
-            return _this;
+            return self;
         },
         slideshow:{
             init: function(){
                 //Set first slide
-                _this.$selectedItem = $(_this.slideItems.get(0));
-                _this.$selectedItem.addClass("selected").css("display", "block");
+                self.$selectedItem = $(self.slideItems.get(0));
+                self.$selectedItem.addClass("selected").css("display", "block");
 
                 //Register handlers
-                _this.slideshow.handlers.slideMouseover();
-                _this.slideshow.handlers.slideMouseout();
+                self.slideshow.handlers.slideMouseover();
+                self.slideshow.handlers.slideMouseout();
 
                 //render preview window
-                _this.previewWindow.init();
+                self.previewWindow.init();
 
                 //Start rotating the slides
-                if(_this.config.autoRotate){
-                    _this.slideshow.startSlideshow();
+                if(self.config.autoRotate){
+                    self.slideshow.startSlideshow();
                 }
             },
             setSlideCssClasses : function(){
-                //Mark first item as selected
                 //Set slide numbers
                 var i, $slide;
-                for (i = 0;i<_this.slideItems.length;i++){
-                    $slide = $(_this.slideItems.get(i));
-                    $slide.attr("data-slide", i).addClass("slide-" + i).css("display", "none");
+                for (i = 0;i<self.slideItems.length;i++){
+                    $slide = $(self.slideItems.get(i));
+                    $slide.attr("data-slide", i).addClass("slide-" + i).css("display", "none").attr("aria-selected", false);
+                }
+
+                //Set css classes if we only have one item or more then 4 slides.
+                if (self.slideItems.length === 1) {
+                    self.$elem.addClass("single-item");
+                    self.config.autoRotate = false;
+                }else if (self.slideItems.length > 4) {
+                    self.$elem.addClass("scroll-items");
                 }
             },
             startSlideshow: function(){
                 //Start rotating the slides
-                _this.$elem.trigger("fabSlideshowStarted");
-                _this.slideRotator = setInterval(
+                self.$elem.trigger("fabSlideshowStarted");
+                self.slideRotator = setInterval(
                     function () {
-                        _this.slideshow.setSlideAsSelected(_this.slideshow.getNextSlide(), true);
-                    }, _this.config.slideInterval);
-                _this.$elem.removeClass("stopped").addClass("playing");
+                        self.slideshow.setSlideAsSelected(self.slideshow.getNextSlide(), true);
+                    }, self.config.slideInterval);
+                self.$elem.removeClass("stopped").addClass("playing");
             },
             stopSlideshow: function(){
                 //Stop rotating the slides
-                _this.$elem.trigger("fabSlideshowStopped");
-                clearInterval(_this.slideRotator);
-                _this.$elem.removeClass("playing").addClass("stopped");
+                self.$elem.trigger("fabSlideshowStopped");
+                clearInterval(self.slideRotator);
+                self.$elem.removeClass("playing").addClass("stopped");
             },
             setSlideAsSelected: function($slide, isAutomated){
                 if($slide.hasClass("selected")){return;}
 
                 //Remove selected css class on current slide
-                _this.slideshow.deselectCurrentSlide(isAutomated);
+                self.slideshow.deselectCurrentSlide(isAutomated);
 
 
                 //Set slide as selected
                 var slideNumber = $slide.data("slide");
-                _this.$selectedItem = $slide;
-                _this.$selectedItem.addClass("selected");
-                _this.selectedSlideIndex = slideNumber;
+                self.$selectedItem = $slide;
+                self.$selectedItem.addClass("selected");
+                self.$selectedItem.attr("aria-selected", true);
+                self.$selectedItem.attr("tab-index", 0);
+                self.selectedSlideIndex = slideNumber;
                 if(isAutomated){
-                    _this.$selectedItem.fadeIn(1000);
+                    self.$selectedItem.fadeIn(1000);
                 }else{
-                    _this.$selectedItem.css("display", "block");
+                    self.$selectedItem.css("display", "block");
                 }
 
                 //Set preview as selected
-                _this.previewWindow.gui.setPreviewItemAsSelected(slideNumber);
-                _this.$elem.trigger("fabSlideshowSlideSelected", [slideNumber, isAutomated]);
+                self.previewWindow.gui.setPreviewItemAsSelected(slideNumber);
+
+                self.$elem.trigger("fabSlideshowSlideSelected", [slideNumber, isAutomated]);
 
             },
             deselectCurrentSlide: function(isAutomated){
-                _this.$selectedItem.removeClass("selected");
-                _this.$elem.trigger("fabSlideshowSlideUnSelected", [_this.selectedSlideIndex, isAutomated]);
+                self.$selectedItem.removeClass("selected");
+                self.$selectedItem.attr("aria-selected", false);
+                self.$selectedItem.attr("tab-index", -1);
+                self.$elem.trigger("fabSlideshowSlideUnSelected", [self.selectedSlideIndex, isAutomated]);
                 if(isAutomated){
-                    _this.$selectedItem.fadeOut(1000);
+                    self.$selectedItem.fadeOut(1000);
                 }else{
-                    _this.$selectedItem.css("display", "none");
+                    self.$selectedItem.css("display", "none");
                 }
             },
 
             getNextSlide: function(){
-                var nextSlideId = (_this.selectedSlideIndex + 1);
-                if(nextSlideId >= _this.slideItems.length){
+                var nextSlideId = (self.selectedSlideIndex + 1);
+                if(nextSlideId >= self.slideItems.length){
                     nextSlideId = 0;
                 }
-                _this.selectedSlideIndex = nextSlideId;
-                return $(_this.slideItems.get(nextSlideId));
+                self.selectedSlideIndex = nextSlideId;
+                return $(self.slideItems.get(nextSlideId));
             },
             getPreviousSlide: function(){
-                var prevSlideId = (_this.selectedSlideIndex - 1);
+                var prevSlideId = (self.selectedSlideIndex - 1);
                 if(prevSlideId < 0){
-                    prevSlideId = (_this.slideItems.length - 1);
+                    prevSlideId = (self.slideItems.length - 1);
                 }
-                return $(_this.slideItems.get(prevSlideId));
+                return $(self.slideItems.get(prevSlideId));
             },
 
             handlers:{
                 slideMouseover: function(){
-                    _this.$elem.mouseover(_this.slideshow.stopSlideshow);
+                    self.$elem.mouseover(self.slideshow.stopSlideshow);
                 },
                 slideMouseout: function(){
-                    _this.$elem.mouseout(_this.slideshow.callbacks.slideMouseout);
+                    self.$elem.mouseout(self.slideshow.callbacks.slideMouseout);
                 }
             },
 
             callbacks:{
                 slideMouseout: function(){
-                    if (_this.config.autoRotate) {
-                        _this.slideRotator = null;
-                        _this.slideshow.startSlideshow();
+                    if (self.config.autoRotate) {
+                        self.slideRotator = null;
+                        self.slideshow.startSlideshow();
                     }
                 }
             }
         },
-
+        //TODO: Move previewWindow to its own module
         previewWindow: {
             init: function(){
-                _this.previewWindow.gui.renderPreviewWindow();
-                _this.previewWindow.handlers.previewItemMouseOver();
+                //Hide preview window if:
+                //  - There's only one slide
+                //  - User has disabled the preview window
+                if (self.slideItems.length <= 1 || !self.config.showPreviewWindow) {
+                    return;
+                }
+                self.previewWindow.gui.renderPreviewWindow();
+                self.previewWindow.handlers.previewItemMouseEvent();
+                self.previewWindow.handlers.previewScrollMouseEvent();
+                self.previewWindow.handlers.previewWindowMouseScrollEvent();
+                self.previewWindow.handlers.slideChangeEvent();
             },
             $previewWindow: {},
             gui: {
                 renderPreviewWindow: function(){
-                    var items = _this.previewWindow.gui.generatePreviewItem(),
-                        previewBlock = "<nav class='fab-slideshow-preview'><ul class='fab-slideshow-preview-container'>{0}</ul></nav>";
-                    _this.$elem.append(previewBlock.format(items));
-                    _this.previewWindow.$previewWindow = _this.$elem.find(".fab-slideshow-preview");
+                    var items = self.previewWindow.gui.generatePreviewItem(),
+                        previewBlock = "<nav class='fab-slideshow-preview'><a href='#' class='fab-slideshow-preview-scroll-up'><span>Scroll up</span></a><ul class='fab-slideshow-preview-container'>{0}</ul><a href='#' class='fab-slideshow-preview-scroll-down'><span>Scroll down</span></a></nav>";
+                    self.$elem.append(previewBlock.format(items));
+                    self.previewWindow.$previewWindow = self.$elem.find(".fab-slideshow-preview");
                 },
                 generatePreviewItem: function(){
                     var item, i, imgSrc, name,
-                        itemTemplate = "<li class='fab-slideshow-preview-item slide-{2} {3}' data-slide='{2}'><img src='{0}' alt='{1}' /><div class='fab-slideshow-preview-item-text'><h3>{1}</h3></div></li>",
+                        itemTemplate = "<li id='fab-slide-{2}' class='fab-slideshow-preview-item slide-{2} {3}' data-slide='{2}'><img src='{0}' alt='{1}' /><div class='fab-slideshow-preview-item-text'><h3>{1}</h3></div></li>",
                         items = "",
                         selectedClass = "";
-                    for(i = 0; i < _this.slideItems.length; i++){
-                        item = $(_this.slideItems.get(i));
+                    for(i = 0; i < self.slideItems.length; i++){
+                        item = $(self.slideItems.get(i));
                         imgSrc = item.find("img").attr("src");
                         name = item.find("h3").text();
                         selectedClass = i === 0 ? "selected"  : "";
@@ -171,22 +195,94 @@
                     return items;
                 },
                 setPreviewItemAsSelected: function(slideNumber){
-                    _this.$elem.find(".fab-slideshow-preview .selected").removeClass("selected");
-                    _this.previewWindow.$previewWindow.find(".slide-" + slideNumber).addClass("selected");
+                    self.$elem.find(".fab-slideshow-preview .selected").removeClass("selected");
+                    self.previewWindow.$previewWindow.find(".slide-" + slideNumber).addClass("selected");
                 }
             },
             handlers:{
                 previewItemMouseOver: function(){
-                    _this.$elem.on("mouseover", ".fab-slideshow-preview-item", _this.previewWindow.callbacks.previewItemMouseOver);
+                    self.$elem.on("mouseover", ".fab-slideshow-preview-item", self.previewWindow.callbacks.previewItemMouseOver);
+                },
+
+                previewItemMouseEvent: function(){
+                    self.$elem.on("mouseover", ".fab-slideshow-preview-item", self.previewWindow.callbacks.previewItemMouseOver);
+                },
+                previewScrollMouseEvent: function() {
+                    self.$elem.on("mouseover", ".fab-slideshow-preview-scroll-up", self.previewWindow.callbacks.previewScrollUpMouseOver);
+                    self.$elem.on("mouseout", ".fab-slideshow-preview-scroll-up", self.previewWindow.callbacks.previewScrollUpMouseOut);
+                    self.$elem.on("mouseover", ".fab-slideshow-preview-scroll-down", self.previewWindow.callbacks.previewScrollDownMouseOver);
+                    self.$elem.on("mouseout", ".fab-slideshow-preview-scroll-down", self.previewWindow.callbacks.previewScrollDownMouseOut);
+                },
+                previewWindowMouseScrollEvent: function() {
+                    self.$elem.find(".fab-slideshow-preview-container").bind('DOMMouseScroll', self.previewWindow.callbacks.previewWindowMouseScroll);
+                    self.$elem.find(".fab-slideshow-preview-container").bind('mousewheel', self.previewWindow.callbacks.previewWindowMouseScroll);
+                },
+                slideChangeEvent: function() {
+                    self.$elem.on("fabSlideshowSlideSelected", self.previewWindow.callbacks.slideChange);
                 }
             },
             callbacks:{
+                slideChange : function(e, slideNumber, isAuto) {
+                    //scrolls the preview window when slides change automatically
+                    if (isAuto) {
+                        var $previewContainer = self.$elem.find(".fab-slideshow-preview-container"),
+                            $slide = self.$elem.find("#fab-slide-" + slideNumber),
+                            positionOfSlide = $previewContainer.scrollTop() - $previewContainer.offset().top + $slide.offset().top;
+                        $previewContainer.scrollTop(positionOfSlide);
+                    }
+                },
+                previewWindowMouseScroll: function(e) {
+                    //Handles mousewheel scrolling in the preview window
+                    var scrollElem = $(this),
+                        scrollDelta = e.detail? e.detail*(-120) : e.wheelDelta,
+                        top = scrollElem.scrollTop();
+                    if (typeof(scrollDelta) === "undefined") {
+                        scrollDelta = e.originalEvent.detail? e.originalEvent.detail*(-120) : e.originalEvent.wheelDelta;
+                    }
+                    if (scrollDelta/120 > 0){
+                        if (top > 49) {
+                            top -= 50;
+                        } else if(top > 0) {
+                            top = 0;
+                        }
+                    } else {
+                        top += 50;
+                    }
+                    scrollElem.scrollTop((top));
+                    e.preventDefault();
+                    e.stopPropagation();
+                },
                 previewItemMouseOver: function(){
                     var $this = $(this),
-                        slideNumber = $this.data("slide"),
-                        $slide = $(_this.slideItems.get(slideNumber));
+                        slideNumber = parseInt($this.attr("data-slide"), 10),
+                        $slide = $(self.slideItems.get(slideNumber));
+                    self.slideshow.setSlideAsSelected($slide, false);
+                },
+                previewScrollUpMouseOver : function() {
+                    var scrollElem = self.$elem.find(".fab-slideshow-preview-container"),
+                        top = scrollElem.scrollTop();
 
-                    _this.slideshow.setSlideAsSelected($slide, false);
+                    self.scrollUpRepeater = setInterval(function() {
+                        top += 2;
+                        scrollElem.scrollTop((top));
+                    }, 10);
+                },
+                previewScrollUpMouseOut : function() {
+                    clearInterval(self.scrollUpRepeater);
+                },
+                previewScrollDownMouseOver : function() {
+                    var scrollElem = self.$elem.find(".fab-slideshow-preview-container"),
+                        top = scrollElem.scrollTop();
+
+                    self.scrollDownRepeater = setInterval(function() {
+                        if (top > 1) {
+                            top -= 2;
+                            scrollElem.scrollTop((top));
+                        }
+                    }, 10);
+                },
+                previewScrollDownMouseOut : function() {
+                    clearInterval(self.scrollDownRepeater);
                 }
             }
         }
